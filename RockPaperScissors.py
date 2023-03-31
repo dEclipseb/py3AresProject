@@ -37,7 +37,7 @@ def menu():
         elif choice == '99':
             userChoice = True
             print("Thank you for playing!")
-            return 0
+            exit()
         else:
             print("Invalid Choice. Please Try again.")
 
@@ -163,12 +163,12 @@ def vsPlayer():
         user1_choice = str(
             input("Please choose rock, paper, scissors, lizard, or spock [type 'exit' to quit]: ").lower())
         os.system('cls')
+        if user1_choice != "exit":
+            user2_choice = str(
+                input("Please choose rock, paper, scissors, lizard, or spock [type 'exit' to quit]: ").lower())
+            os.system('cls')
 
-        user2_choice = str(
-            input("Please choose rock, paper, scissors, lizard, or spock [type 'exit' to quit]: ").lower())
-        os.system('cls')
-
-        if user1_choice and user2_choice == "exit":
+        if user1_choice or user2_choice == "exit":
             userPlay = False
             menu()
         elif user1_choice and user2_choice not in choices:
@@ -286,7 +286,7 @@ def powerUp():
         else:
             gameProceed = False
             choices = ["rock", "paper", "scissors", "lizard", "spock"]
-            powerUps = ["SHIELD", "POISON"]
+            powerUps = ["SHIELD", "HEAL", "POISON", "SWITCH"]
             print("___________________________________________")
             print(f"[HP] P1 = {P1hp}/10 || CP = {CPhp}/10")
             print(f"[ROUND {round}]")
@@ -315,10 +315,26 @@ def powerUp():
                 if P1Powerup == "POISON":
                     if P2poisonStatus == False:
                         P2poisonStatus = True
+                elif P1Powerup == "SHIELD":
+                    P1prevHP = P1hp
+                elif P1Powerup == "SWITCH":
+                    graphicChoice(user_choice, computer_choice)
+                    print("A switch powerup has been applied to Player 1!")
+                    temp = user_choice
+                    user_choice = computer_choice
+                    computer_choice = temp
 
                 if CPPowerup == "POISON":
                     if P1poisonStatus == False:
                         P1poisonStatus = True
+                elif CPPowerup == "SHIELD":
+                    CPprevHP = CPhp
+                elif CPPowerup == "SWITCH":
+                    graphicChoice(user_choice, computer_choice)
+                    print("A switch powerup has been applied to computer!")
+                    temp = computer_choice
+                    computer_choice = user_choice
+                    user_choice = temp
 
 
                 if user_choice == computer_choice:
@@ -370,6 +386,20 @@ def powerUp():
                     P1hp -=1
                     print("Computer won.")
 
+                if P1Powerup == "SHIELD":
+                    if P1prevHP > P1hp:
+                        print("SHIELD powerup activated! You take no damage.")
+                        P1hp += 1
+                    else:
+                        print("You have not been damaged, SHIELD powerup has no effect.")
+
+                if CPPowerup == "SHIELD":
+                    if CPprevHP > CPhp:
+                        print("Computer SHIELD powerup activated! They take no damage.")
+                        CPhp += 1
+                    else:
+                        print("Computer has not been damaged, SHIELD powerup has no effect.")
+
                 if P1poisonStatus == True:
                     if P1poisonCounter <= 2:
                         print("You have been poisoned! Your HP decreases by 0.5 point.")
@@ -390,6 +420,21 @@ def powerUp():
                         P2poisonCounter = 0
                         P2poisonStatus = False
 
+                if P1Powerup == "HEAL":
+                    if P1hp >= 10:
+                        P1hp = 10
+                        print("HEAL powerup activated! Max HP Exceeded, no effect!")
+                    else:
+                        print("HEAL powerup activated! You gain 0.5 HP point")
+                        P1hp += 0.5
+                if CPPowerup == "HEAL":
+                    if CPhp >= 10:
+                        CPhp = 10
+                        print("Computer HEAL powerup activated! Max HP Exceeded, no effect!")
+                    else:
+                        print("Computer HEAL powerup activated! They gain 0.5 HP point")
+                        CPhp += 0.5
+
 
                 round +=1
 
@@ -408,10 +453,26 @@ def how2Play():
     print("> spock vaporizes rock")
     print("> rock smashes scissors\n\n")
 
-    print("-------Player VS Computer")
-
-    print("-------Player VS Player")
-
+    print("GAME MODES:\n")
+    print("-------Player VS Computer:")
+    print("       > Each round, the player will be the first to select between rock, paper, scissors, lizard, and spock.")
+    print("       > The computer will make a random choice.")
+    print("       > The player's and computer's choices will be compared according to the game rules, and whoever wins will receive one point.")
+    print("\n\n-------Player VS Player:")
+    print("       > Each round,Player 1 and Player 2 will enter their selections sequentially.")
+    print("       > The player 1's and player 2's choices will be compared according to the game rules, and whoever wins will receive one point.")
+    print("       > Whoever wins will receive one point.")
+    print("\n\n-------Powerup Game Mode:")
+    print("       > The game will start with both player and computer having a 10 HP.")
+    print("       > Each round, the player will be the first to select between rock, paper, scissors, lizard, and spock.")
+    print("       > The computer will make a random choice.")
+    print("       > A random powerup will be generated. Random powerups can be shield, switch, poison, or heal.")
+    print("       [1] Shield -> Allows the player or computer to block computer's next move.")
+    print("       [2] Poison -> Allows the player or computer to poison the computer, causing them to lose 0.5 HP. The poison will be lifted after three rounds.")
+    print("       [3] Switch -> Allows the player or computer to switch move with their opponent.")
+    print("       [4] Heal ---> Restores 0.5 HP.")
+    print("       > The player's and computer's choices will be compared according to the game rules, and whoever loses will receive 0.5 HP deduction.")
+    print("       > The first one to have 0 HP loses and the remaining player will win.")
     print("_________________________________________________________________________")
     print("[1] Back to Menu")
     print("[99] Exit\n")
